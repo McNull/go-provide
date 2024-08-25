@@ -16,9 +16,9 @@ go get github.com/mcnull/go-provide
 package main
 
 import (
-	"fmt"
+  "fmt"
 
-	"github.com/mcnull/go-provide"
+  "github.com/mcnull/go-provide"
 )
 
 ////////////////////////
@@ -26,18 +26,18 @@ import (
 ////////////////////////
 
 func init() {
-	provide.Set[MyRepo](NewMyRepo)
-	provide.Set[MyService](NewMyService)
+  provide.Set[MyRepo](NewMyRepo)
+  provide.Set[MyService](NewMyService)
 }
 
 func main() {
-	myService, err := provide.Get[MyService]()
+  myService, err := provide.Get[MyService]()
 
-	if err != nil {
-		panic(err)
-	}
+  if err != nil {
+    panic(err)
+  }
 
-	myService.Print() // Output: Hello, World!
+  myService.Print() // Output: Hello, World!
 }
 
 ////////////////////////
@@ -45,17 +45,17 @@ func main() {
 ////////////////////////
 
 type MyRepo interface {
-	Get() string
+  Get() string
 }
 
 type myRepo struct{}
 
 func (r *myRepo) Get() string {
-	return "Hello, World!"
+  return "Hello, World!"
 }
 
 func NewMyRepo( /* add dependencies here*/ ) *myRepo {
-	return &myRepo{}
+  return &myRepo{}
 }
 
 ////////////////////////
@@ -63,21 +63,21 @@ func NewMyRepo( /* add dependencies here*/ ) *myRepo {
 ////////////////////////
 
 type MyService interface {
-	Print()
+  Print()
 }
 
 type myService struct {
-	Repo MyRepo
+  Repo MyRepo
 }
 
 func (s *myService) Print() {
-	fmt.Println(s.Repo.Get())
+  fmt.Println(s.Repo.Get())
 }
 
 func NewMyService(myRepo MyRepo /* add dependencies here */) *myService {
-	return &myService{
-		Repo: myRepo,
-	}
+  return &myService{
+    Repo: myRepo,
+  }
 }
 ```
 
