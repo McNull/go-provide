@@ -137,3 +137,4 @@ provide.Invoke(myFunction)
 ```
 
 ## License
+MIT
