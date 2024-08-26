@@ -20,8 +20,21 @@ func getDefaultValue[T any]() T {
 // }
 
 func getFullTypeName(t reflect.Type) string {
-	if t.PkgPath() != "" {
-		return fmt.Sprintf("%s.%s", t.PkgPath(), t.Name())
+
+	prefix := ""
+
+	for {
+		if t.Kind() == reflect.Ptr {
+			prefix += "*"
+			t = t.Elem()
+		} else {
+			break
+		}
 	}
-	return t.Name()
+
+	if t.PkgPath() != "" {
+		prefix += t.PkgPath() + "."
+	}
+
+	return fmt.Sprintf("%s%s", prefix, t.Name())
 }

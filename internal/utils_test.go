@@ -38,3 +38,37 @@ func TestGetFullTypeName(t *testing.T) {
 		})
 	}
 }
+
+func TestGetFullTypeName2(t *testing.T) {
+
+	t.Run("External type", func(t *testing.T) {
+		tt := reflect.TypeFor[testpkg.Person]()
+		want := "github.com/mcnull/go-provide/testpkg.Person"
+		got := getFullTypeName(tt)
+
+		if got != want {
+			t.Errorf("getFullTypeName() = \"%v\", want \"%v\"", got, want)
+		}
+	})
+
+	t.Run("External type with pointer", func(t *testing.T) {
+		tt := reflect.TypeFor[*testpkg.Person]()
+		want := "*github.com/mcnull/go-provide/testpkg.Person"
+		got := getFullTypeName(tt)
+
+		if got != want {
+			t.Errorf("getFullTypeName() = \"%v\", want \"%v\"", got, want)
+		}
+	})
+
+	t.Run("External type with pointer to pointer", func(t *testing.T) {
+		tt := reflect.TypeFor[**testpkg.Person]()
+		want := "**github.com/mcnull/go-provide/testpkg.Person"
+		got := getFullTypeName(tt)
+
+		if got != want {
+			t.Errorf("getFullTypeName() = \"%v\", want \"%v\"", got, want)
+		}
+	})
+
+}
