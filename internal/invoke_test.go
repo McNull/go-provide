@@ -121,3 +121,47 @@ func Test_invoke(t *testing.T) {
 	}
 
 }
+
+func TestInvokeValue(t *testing.T) {
+	type MyResult struct {
+		Value int
+	}
+
+	t.Run("Struct value", func(t *testing.T) {
+		testFunc := func() MyResult {
+			return MyResult{Value: 123}
+		}
+
+		var result MyResult
+
+		err := InvokeValue(testFunc, &result)
+
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		if result.Value != 123 {
+			t.Errorf("Expected 123, got %d", result.Value)
+		}
+	})
+
+	t.Run("Struct pointer value", func(t *testing.T) {
+		testFunc := func() *MyResult {
+			return &MyResult{Value: 123}
+		}
+
+		var result *MyResult
+
+		err := InvokeValue(testFunc, &result)
+
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		if result.Value != 123 {
+			t.Errorf("Expected 123, got %d", result.Value)
+		}
+	})
+}

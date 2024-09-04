@@ -11,6 +11,15 @@ func Invoke(fn any) (any, error) {
 	return invoke(fn, rootContainer)
 }
 
+func InvokeValue[T any](fn any, value *T) error {
+	v, err := invoke(fn, rootContainer)
+	if err != nil {
+		return err
+	}
+	*value = v.(T)
+	return nil
+}
+
 type invokeFunc func(fn any, container *Container) (any, error)
 
 // invoke invokes a function with the provided container.
