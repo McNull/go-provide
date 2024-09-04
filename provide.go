@@ -39,3 +39,9 @@ func GetValueByName[K any](name string, value *K) error {
 func Invoke(fn any) (any, error) {
 	return internal.Invoke(fn)
 }
+
+// InvokeValue takes a function argument and a pointer to a value, tries to resolve all argument dependencies and
+// sets the result of the function to the value.
+func InvokeValue[T any](fn any, value *T) error {
+	return internal.InvokeValue(fn, value)
+}
