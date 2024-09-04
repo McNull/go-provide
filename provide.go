@@ -19,9 +19,19 @@ func Get[K any]() (K, error) {
 	return internal.Get[K]()
 }
 
-// GetByName takes a name and returns the resolved value set earlier with SetByName.
+// GetValue takes a pointer to a value and returns the resolved value set earlier with Set.
+func GetValue[K any](value *K) error {
+	return internal.GetValue[K](value)
+}
+
+// GetByName takes a name and returns the resolved value set earlier with Set or SetByName.
 func GetByName[K any](name string) (K, error) {
 	return internal.GetByName[K](name)
+}
+
+// GetValueByName takes a name and a pointer to a value and returns the resolved value set earlier with Set or SetByName.
+func GetValueByName[K any](name string, value *K) error {
+	return internal.GetValueByName(name, value)
 }
 
 // Invoke takes a function argument, tries to resolve all argument dependencies and

@@ -1,6 +1,6 @@
 # go-provide
 
-`go-provide` is a simple dependency injection module for Go. It allows you to define a set of providers that can be used to create instances of objects. 
+`go-provide` is a simple dependency injection module for Go. It allows you to define a set of providers that can be used to create instances of objects.
 
 ## Installation
 
@@ -84,7 +84,8 @@ func NewMyService(myRepo MyRepo /* add dependencies here */) *myService {
 ## Api documentation
 
 ### Set
-Sets a provider for a type. 
+
+Sets a provider for a type.
 
 The provider can be a (factory) function or an instance of the type. If the provider is a function, all arguments of the function are resolved and passed to the function. The return value of the function is used as the instance of the type.
 
@@ -110,6 +111,7 @@ provide.Set[*myStruct](NewMyStruct)
 ```
 
 ### Get
+
 Resolves an instance of the provided type.
 
 Returns an earlier registered instance of a type, with all dependencies resolved.
@@ -125,7 +127,23 @@ if err != nil {
 println(instance.Number) // Output: 42
 ```
 
+### GetValue
+
+Takes a pointer to a value and resolves the value.
+
+```go
+var myIntValue myInt
+err := provide.GetValue(&myIntValue)
+
+if err != nil {
+  panic(err)
+}
+
+println(myIntValue) // Output: 42
+```
+
 ### Invoke
+
 Executes a function with all dependencies resolved.
 
 ```go
@@ -137,4 +155,5 @@ provide.Invoke(myFunction)
 ```
 
 ## License
+
 MIT
