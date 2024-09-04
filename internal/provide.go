@@ -36,3 +36,27 @@ func GetByName[K any](name string) (K, error) {
 
 	return getDefaultValue[K](), fmt.Errorf("type assertion from %T to %T failed", instance, genericTypeToString[K]())
 }
+
+func GetValueByName[K any](name string, value *K) error {
+	instance, err := GetByName[K](name)
+
+	if err != nil {
+		return err
+	}
+
+	*value = instance
+
+	return nil
+}
+
+func GetValue[K any](value *K) error {
+	instance, err := Get[K]()
+
+	if err != nil {
+		return err
+	}
+
+	*value = instance
+
+	return nil
+}

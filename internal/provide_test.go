@@ -90,4 +90,121 @@ func TestSetGet(t *testing.T) {
 			t.Fatalf("Expected value %v, but got: %v", "customType", result)
 		}
 	})
+
+	t.Run("GetSetValueByName", func(t *testing.T) {
+
+		t.Run("struct value", func(t *testing.T) {
+			myStruct := person{Name: "myStruct"}
+
+			SetByName("person", myStruct)
+
+			var result person
+
+			err := GetValueByName[person]("person", &result)
+
+			if err != nil {
+				t.Fatalf("Expected no error, but got: %v", err)
+			}
+
+			if result.Name != myStruct.Name {
+				t.Fatalf("Expected value %v, but got: %v", myStruct, result)
+			}
+		})
+
+		t.Run("struct pointer value", func(t *testing.T) {
+			myStruct := person{Name: "myStruct"}
+
+			SetByName("*person", &myStruct)
+
+			var result *person
+
+			err := GetValueByName("*person", &result)
+
+			if err != nil {
+				t.Fatalf("Expected no error, but got: %v", err)
+			}
+
+			if result.Name != myStruct.Name {
+				t.Fatalf("Expected value %v, but got: %v", myStruct, result)
+			}
+		})
+
+		t.Run("interface value", func(t *testing.T) {
+
+			myStruct := person{Name: "myStruct"}
+
+			SetByName("namer", &myStruct)
+
+			var result namer
+
+			err := GetValueByName("namer", &result)
+
+			if err != nil {
+				t.Fatalf("Expected no error, but got: %v", err)
+			}
+
+			if result.GetName() != myStruct.GetName() {
+				t.Fatalf("Expected value %v, but got: %v", myStruct, result)
+			}
+		})
+
+	})
+
+	t.Run("GetValue", func(t *testing.T) {
+
+		t.Run("struct value", func(t *testing.T) {
+			myStruct := person{Name: "myStruct"}
+
+			Set[person](myStruct)
+
+			var result person
+
+			err := GetValue(&result)
+
+			if err != nil {
+				t.Fatalf("Expected no error, but got: %v", err)
+			}
+
+			if result.Name != myStruct.Name {
+				t.Fatalf("Expected value %v, but got: %v", myStruct, result)
+			}
+		})
+
+		t.Run("struct pointer value", func(t *testing.T) {
+			myStruct := person{Name: "myStruct"}
+
+			Set[*person](&myStruct)
+
+			var result *person
+
+			err := GetValue(&result)
+
+			if err != nil {
+				t.Fatalf("Expected no error, but got: %v", err)
+			}
+
+			if result.Name != myStruct.Name {
+				t.Fatalf("Expected value %v, but got: %v", myStruct, result)
+			}
+		})
+
+		t.Run("interface value", func(t *testing.T) {
+
+			myStruct := person{Name: "myStruct"}
+
+			Set[namer](&myStruct)
+
+			var result namer
+
+			err := GetValue(&result)
+
+			if err != nil {
+				t.Fatalf("Expected no error, but got: %v", err)
+			}
+
+			if result.GetName() != myStruct.GetName() {
+				t.Fatalf("Expected value %v, but got: %v", myStruct, result)
+			}
+		})
+	})
 }
