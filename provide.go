@@ -1,6 +1,8 @@
 package provide
 
 import (
+	"reflect"
+
 	"github.com/mcnull/go-provide/internal"
 )
 
@@ -14,24 +16,44 @@ func SetByName(name string, value any) {
 	internal.SetByName(name, value)
 }
 
-// Get takes a type argument and returns the resolved value set earlier with Set.
+// SetByType takes a type and a value and stores the value in the container.
+func SetByType(t reflect.Type, value any) {
+	internal.SetByType(t, value)
+}
+
+// Get takes a type argument and returns the resolved value set earlier by any of the Set* function.
 func Get[K any]() (K, error) {
 	return internal.Get[K]()
 }
 
-// GetValue takes a pointer to a value and returns the resolved value set earlier with Set.
-func GetValue[K any](value *K) error {
-	return internal.GetValue[K](value)
+// GetByType takes a type and returns the resolved value set earlier by any of the Set* function.
+func GetByType(t reflect.Type) (any, error) {
+	return internal.GetByType(t)
 }
 
-// GetByName takes a name and returns the resolved value set earlier with Set or SetByName.
+// GetByName takes a name and returns the resolved value set earlier by any of the Set* function.
 func GetByName[K any](name string) (K, error) {
 	return internal.GetByName[K](name)
 }
 
-// GetValueByName takes a name and a pointer to a value and returns the resolved value set earlier with Set or SetByName.
-func GetValueByName[K any](name string, value *K) error {
-	return internal.GetValueByName(name, value)
+// GetValue resolves the generic type K and sets the resolved value to the pointer dst.
+func GetValue[K any](dst *K) error {
+	return internal.GetValue[K](dst)
+}
+
+// GetValueByName takes a name and a pointer to a value and resolves the value set earlier by any of the Set* function.
+func GetValueByName[K any](name string, dst *K) error {
+	return internal.GetValueByName(name, dst)
+}
+
+// GetValueByType takes a type and a pointer to a value and resolves the value set earlier by any of the Set* function.
+func GetValueByType(t reflect.Type, dst any) error {
+	return internal.GetValueByType(t, dst)
+}
+
+// GetValuesByTypes takes a slice of types and a pointer to a slice of values and resolves the values set earlier by any of the Set* function.
+func GetValuesByTypes(types []reflect.Type, dst *[]any) error {
+	return internal.GetValuesByTypes(types, dst)
 }
 
 // Invoke takes a function argument, tries to resolve all argument dependencies and
@@ -40,8 +62,8 @@ func Invoke(fn any) (any, error) {
 	return internal.Invoke(fn)
 }
 
-// InvokeValue takes a function argument and a pointer to a value, tries to resolve all argument dependencies and
-// sets the result of the function to the value.
-func InvokeValue[T any](fn any, value *T) error {
-	return internal.InvokeValue(fn, value)
+// InvokeValue takes a function argument, tries to resolve all argument dependencies and
+// sets the result of the function to the pointer dst.
+func InvokeValue[T any](fn any, dst *T) error {
+	return internal.InvokeValue(fn, dst)
 }

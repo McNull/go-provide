@@ -11,12 +11,12 @@ func Invoke(fn any) (any, error) {
 	return invoke(fn, rootContainer)
 }
 
-func InvokeValue[T any](fn any, value *T) error {
+func InvokeValue[T any](fn any, dst *T) error {
 	v, err := invoke(fn, rootContainer)
 	if err != nil {
 		return err
 	}
-	*value = v.(T)
+	*dst = v.(T)
 	return nil
 }
 

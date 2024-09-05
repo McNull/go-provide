@@ -38,3 +38,7 @@ func getFullTypeName(t reflect.Type) string {
 
 	return fmt.Sprintf("%s%s", prefix, t.Name())
 }
+
+func isPointer(x any) bool {
+	return reflect.TypeOf(x).Kind() == reflect.Ptr
+}
