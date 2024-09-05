@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fmt"
 	"reflect"
 )
 
@@ -26,7 +27,17 @@ func _resolveByName(name string, container *Container, invoke invokeFunc) (any, 
 	// if the value is a function, invoke it
 	vt := reflect.TypeOf(v)
 	if vt.Kind() == reflect.Func {
-		return invoke(v, container)
+		r, err := invoke(v, container)
+
+		if err != nil {
+			err = fmt.Errorf("error invoking factory function for type \"%s\": %w", name, err)
+			return nil, err
+		}
+
+		// cache the result
+		container.set(name, r)
+
+		return r, nil
 	}
 
 	return v, nil

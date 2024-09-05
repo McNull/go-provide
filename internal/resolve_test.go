@@ -136,4 +136,38 @@ func Test_resolve(t *testing.T) {
 			t.Errorf("_resolve() = %v, want %v", got, want)
 		}
 	})
+
+	t.Run("function result should be cached", func(t *testing.T) {
+		type testService struct {
+			Val int
+		}
+
+		factory := func() *testService {
+			return &testService{Val: 1}
+		}
+
+		tp := reflect.TypeFor[*testService]()
+		tn := getFullTypeName(tp)
+
+		container := newContainer()
+		container.set(tn, factory)
+
+		r1, err := _resolve(tp, container, invoke)
+
+		if err != nil {
+			t.Errorf("unexpected error while resolving r1: %v", err)
+			return
+		}
+
+		r2, err := _resolve(tp, container, invoke)
+
+		if err != nil {
+			t.Errorf("unexpected error while resolving r2: %v", err)
+			return
+		}
+
+		if r1 != r2 {
+			t.Errorf("r1 and r2 should be the same")
+		}
+	})
 }
