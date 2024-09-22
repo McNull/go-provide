@@ -226,4 +226,19 @@ func TestInvokeError(t *testing.T) {
 			t.Errorf("Expected 123, got %v", result)
 		}
 	})
+
+	t.Run("Should return (nil) when fn => (nil error)", func(t *testing.T) {
+		testFunc := func() error { return nil }
+
+		result, err := Invoke(testFunc)
+
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		if result != nil {
+			t.Errorf("Expected nil, got %v", result)
+		}
+	})
 }
