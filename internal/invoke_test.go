@@ -165,3 +165,65 @@ func TestInvokeValue(t *testing.T) {
 		}
 	})
 }
+
+func TestInvokeError(t *testing.T) {
+	t.Run("Should return (nil, error) when fn => (error)", func(t *testing.T) {
+		testFunc := func() error {
+			return fmt.Errorf("test error")
+		}
+
+		_, err := Invoke(testFunc)
+
+		if err == nil {
+			t.Error("Expected error")
+			return
+		}
+	})
+
+	t.Run("Should return (nil, error) when fn => (any, error)", func(t *testing.T) {
+		testFunc := func() (any, error) {
+			return nil, fmt.Errorf("test error")
+		}
+
+		_, err := Invoke(testFunc)
+
+		if err == nil {
+			t.Error("Expected error")
+			return
+		}
+	})
+
+	t.Run("Should return (any, nil) when fn => (any)", func(t *testing.T) {
+		testFunc := func() any {
+			return 123
+		}
+
+		result, err := Invoke(testFunc)
+
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		if result != 123 {
+			t.Errorf("Expected 123, got %v", result)
+		}
+	})
+
+	t.Run("Should return (any, nil) when fn => (any, nil)", func(t *testing.T) {
+		testFunc := func() (any, error) {
+			return 123, nil
+		}
+
+		result, err := Invoke(testFunc)
+
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		if result != 123 {
+			t.Errorf("Expected 123, got %v", result)
+		}
+	})
+}

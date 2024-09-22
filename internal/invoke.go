@@ -49,8 +49,17 @@ func _invoke(fn any, container *Container, resolveAll resolveAllFunc) (any, erro
 		return nil, nil
 	}
 
-	// if the function returns a single value, return it
+	// if the function returns a single value
 	if len(rr) == 1 {
+		// if the value is an error, change return value to nil, error
+		if rr[0].Type().Implements(reflect.TypeOf((*error)(nil)).Elem()) {
+			if rr[0].IsNil() {
+				return nil, nil
+			}
+
+			return nil, rr[0].Interface().(error)
+		}
+
 		return rr[0].Interface(), nil
 	}
 
