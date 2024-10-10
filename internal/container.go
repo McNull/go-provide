@@ -8,6 +8,7 @@ import (
 var rootContainer = newContainer()
 
 type Container struct {
+	factories map[string]any
 	instances map[string]any
 	// parent    *Container
 	// children  []*Container
@@ -15,6 +16,7 @@ type Container struct {
 
 func newContainer() *Container {
 	return &Container{
+		factories: make(map[string]any),
 		instances: make(map[string]any),
 		// parent:    nil,
 		// children:  []*Container{},
@@ -22,20 +24,25 @@ func newContainer() *Container {
 }
 
 func (c *Container) set(key string, value any) {
-	c.instances[key] = value
+	c.factories[key] = value
 }
 
 func (c *Container) get(key string) (any, error) {
-	instance, ok := c.instances[key]
+	instance, ok := c.factories[key]
 	if !ok {
-		// if c.parent != nil {
-		// 	return c.parent.get(key)
-		// }
-
-		msg := fmt.Sprintf("instance \"%s\" not found in container", key)
+		msg := fmt.Sprintf("factory \"%s\" not found in container", key)
 		return nil, errors.New(msg)
 	}
 	return instance, nil
+}
+
+func (c *Container) setInstance(key string, value any) {
+	c.instances[key] = value
+}
+
+func (c *Container) getInstance(key string) (any, bool) {
+	instance, ok := c.instances[key]
+	return instance, ok
 }
 
 // func (c *Container) removeChild(child *Container) {

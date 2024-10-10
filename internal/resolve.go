@@ -17,27 +17,39 @@ func _resolve(t reflect.Type, container *Container, invoke invokeFunc) (any, err
 	return _resolveByName(n, container, invoke)
 }
 
+// central function for resolving a type by name
 func _resolveByName(name string, container *Container, invoke invokeFunc) (any, error) {
-	v, err := container.get(name)
 
-	if err != nil {
-		return nil, err
-	}
+	// try instance first
 
-	// if the value is a function, invoke it
-	vt := reflect.TypeOf(v)
-	if vt.Kind() == reflect.Func {
-		r, err := invoke(v, container)
+	v, ok := container.getInstance(name)
+
+	if !ok {
+		// if not found, try factory
+
+		vv, err := container.get(name)
 
 		if err != nil {
-			err = fmt.Errorf("error invoking factory function for type \"%s\": %w", name, err)
 			return nil, err
 		}
 
-		// cache the result
-		container.set(name, r)
+		v = vv
 
-		return r, nil
+		// if the value is a function, invoke it
+		vt := reflect.TypeOf(v)
+		if vt.Kind() == reflect.Func {
+			r, err := invoke(v, container)
+
+			if err != nil {
+				err = fmt.Errorf("error invoking factory function for type \"%s\": %w", name, err)
+				return nil, err
+			}
+
+			// cache the result
+			container.setInstance(name, r)
+
+			return r, nil
+		}
 	}
 
 	return v, nil

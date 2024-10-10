@@ -170,4 +170,98 @@ func Test_resolve(t *testing.T) {
 			t.Errorf("r1 and r2 should be the same")
 		}
 	})
+
+	t.Run("function should return function result", func(t *testing.T) {
+
+		// type to register the function
+		type registerFuncType func() int
+
+		want := 1
+
+		innerFunc := func() int {
+			return want
+		}
+
+		// note: the constructor function must return the type that is being registered
+		constructorFunc := func() registerFuncType {
+			return innerFunc
+		}
+
+		tp := reflect.TypeFor[registerFuncType]()
+		tn := getFullTypeName(tp)
+
+		container := newContainer()
+		container.set(tn, constructorFunc)
+
+		r, err := _resolve(tp, container, invoke)
+
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+			return
+		}
+
+		if r == nil {
+			t.Errorf("unexpected nil result")
+			return
+		}
+
+		got := r.(registerFuncType)()
+
+		if got != want {
+			t.Errorf("got %d, want %d", got, want)
+		}
+	})
+
+	t.Run("function should return function as result twice", func(t *testing.T) {
+
+		// register a function that returns a function
+
+		want := 1
+
+		innerFunc := func() int {
+			return want
+		}
+
+		// type to register the function
+		// function returning func() int
+		type registerFuncType func() func() int
+
+		toRegisterFunc := func() func() int {
+			return innerFunc
+		}
+
+		// note: the constructor function must return the type that is being registered
+		constructorFunc := func() registerFuncType {
+			return toRegisterFunc
+		}
+
+		tp := reflect.TypeFor[registerFuncType]()
+		tn := getFullTypeName(tp)
+
+		container := newContainer()
+		container.set(tn, constructorFunc)
+
+		for i := 0; i < 2; i++ {
+			r, err := _resolve(tp, container, invoke)
+
+			if err != nil {
+				t.Errorf("unexpected error: %v", err)
+				return
+			}
+
+			if r == nil {
+				t.Errorf("unexpected nil result")
+				return
+			}
+
+			fn := r.(registerFuncType)()
+
+			got := fn()
+
+			if got != want {
+				t.Errorf("got %d, want %d", got, want)
+			}
+		}
+	})
+
 }
